@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="page-loader" class="page-loader" aria-label="Загрузка" aria-busy="true">
+    <div class="page-loader__spinner" aria-hidden="true"></div>
+  </div>
   <main class="landing-shell">
   <div class="full-width-image">
     <img src="assets/1.png" alt="Изображение 1">
@@ -66,6 +69,18 @@
   </div>
 
   <script>
+    (function () {
+      var loader = document.getElementById("page-loader");
+      if (!loader) return;
+      function hideLoader() {
+        loader.hidden = true;
+        loader.setAttribute("aria-hidden", "true");
+        loader.setAttribute("aria-busy", "false");
+      }
+      if (document.readyState === "complete") hideLoader();
+      else window.addEventListener("load", hideLoader);
+    })();
+
     (function () {
       var el = document.getElementById("hero-countdown-timer");
       if (!el) return;
