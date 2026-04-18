@@ -81,8 +81,11 @@
 
       function tick(ts) {
         var elapsed = ts - start;
+        while (elapsed >= durationMs) {
+          start += durationMs;
+          elapsed = ts - start;
+        }
         var left = durationMs - elapsed;
-        if (left < 0) left = 0;
 
         var minutes = Math.floor(left / 60000);
         var seconds = Math.floor((left % 60000) / 1000);
@@ -91,7 +94,7 @@
         el.textContent =
           pad(minutes, 2) + ":" + pad(seconds, 2) + ":" + pad(cs, 2);
 
-        if (left > 0) requestAnimationFrame(tick);
+        requestAnimationFrame(tick);
       }
 
       requestAnimationFrame(tick);
@@ -134,6 +137,29 @@
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && !overlay.hidden) closeOverlay();
       });
+    })();
+
+    (function () {
+      function blockMultiTouch(e) {
+        if (e.touches && e.touches.length > 1) e.preventDefault();
+      }
+
+      document.addEventListener("touchstart", blockMultiTouch, { passive: false });
+      document.addEventListener("touchmove", blockMultiTouch, { passive: false });
+
+      ["gesturestart", "gesturechange", "gestureend"].forEach(function (type) {
+        document.addEventListener(type, function (e) {
+          e.preventDefault();
+        });
+      });
+
+      document.addEventListener(
+        "wheel",
+        function (e) {
+          if (e.ctrlKey) e.preventDefault();
+        },
+        { passive: false }
+      );
     })();
   </script>
 </body>
