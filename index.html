@@ -1,1 +1,84 @@
-index.
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="full-width-image">
+    <img src="assets/1.png" alt="Изображение 1">
+  </div>
+  <div class="full-width-image full-width-image--hero">
+    <img src="assets/2.png" alt="Изображение 2">
+    <div class="hero-overlay">
+      <img src="assets/button1.png" alt="" class="hero-overlay__button">
+      <div class="hero-overlay__hint-row">
+        <p class="hero-overlay__hint">Для регистрации кликни тут</p>
+        <img src="assets/arrow1.svg" alt="" class="hero-overlay__hint-arrow" width="12" height="19">
+      </div>
+      <p class="hero-overlay__timer" id="hero-countdown-timer" aria-live="polite">09:59:00</p>
+    </div>
+  </div>
+  <div class="full-width-image">
+    <img src="assets/3.png" alt="Изображение 3">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/4.png" alt="Изображение 4">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/5.png" alt="Изображение 5">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/6.png" alt="Изображение 6">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/7.png" alt="Изображение 7">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/8.png" alt="Изображение 8">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/9.png" alt="Изображение 9">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/10.png" alt="Изображение 10">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/11.png" alt="Изображение 11">
+  </div>
+  <script>
+    (function () {
+      var el = document.getElementById("hero-countdown-timer");
+      if (!el) return;
+
+      var durationMs = 9 * 60 * 1000 + 59 * 1000;
+      var start = performance.now();
+
+      function pad(n, len) {
+        var s = String(n);
+        while (s.length < len) s = "0" + s;
+        return s;
+      }
+
+      function tick(ts) {
+        var elapsed = ts - start;
+        var left = durationMs - elapsed;
+        if (left < 0) left = 0;
+
+        var minutes = Math.floor(left / 60000);
+        var seconds = Math.floor((left % 60000) / 1000);
+        var cs = Math.floor((left % 1000) / 10);
+
+        el.textContent =
+          pad(minutes, 2) + ":" + pad(seconds, 2) + ":" + pad(cs, 2);
+
+        if (left > 0) requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
