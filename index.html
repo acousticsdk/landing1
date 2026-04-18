@@ -2,18 +2,19 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
   <title></title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main class="landing-shell">
   <div class="full-width-image">
     <img src="assets/1.png" alt="Изображение 1">
   </div>
   <div class="full-width-image full-width-image--hero">
     <img src="assets/2.png" alt="Изображение 2">
     <div class="hero-overlay">
-      <img src="assets/button1.png" alt="" class="hero-overlay__button">
+      <img src="assets/button1.png" alt="" class="hero-overlay__button screen-overlay-trigger">
       <div class="hero-overlay__hint-row">
         <p class="hero-overlay__hint">Для регистрации кликни тут</p>
         <img src="assets/arrow1.svg" alt="" class="hero-overlay__hint-arrow" width="12" height="19">
@@ -34,20 +35,36 @@
     <img src="assets/6.png" alt="Изображение 6">
   </div>
   <div class="full-width-image">
-    <img src="assets/7.png" alt="Изображение 7">
+    <img src="assets/7.png" alt="Изображение 7" class="screen-overlay-trigger">
   </div>
   <div class="full-width-image">
     <img src="assets/8.png" alt="Изображение 8">
   </div>
   <div class="full-width-image">
-    <img src="assets/9.png" alt="Изображение 9">
+    <img src="assets/9.png" alt="Изображение 9" class="screen-overlay-trigger">
   </div>
   <div class="full-width-image">
     <img src="assets/10.png" alt="Изображение 10">
   </div>
   <div class="full-width-image">
-    <img src="assets/11.png" alt="Изображение 11">
+    <img src="assets/11.png" alt="Изображение 11" class="screen-overlay-trigger">
   </div>
+  </main>
+
+  <div
+    class="screen-overlay"
+    id="screen-overlay"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Окно"
+    hidden
+    aria-hidden="true"
+  >
+    <button type="button" class="screen-overlay__close" id="screen-overlay-close" aria-label="Закрыть">
+      <span aria-hidden="true" class="screen-overlay__close-x">×</span>
+    </button>
+  </div>
+
   <script>
     (function () {
       var el = document.getElementById("hero-countdown-timer");
@@ -78,6 +95,45 @@
       }
 
       requestAnimationFrame(tick);
+    })();
+
+    (function () {
+      var overlay = document.getElementById("screen-overlay");
+      var closeBtn = document.getElementById("screen-overlay-close");
+      if (!overlay || !closeBtn) return;
+
+      function openOverlay() {
+        overlay.hidden = false;
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeBtn.focus();
+      }
+
+      function closeOverlay() {
+        overlay.hidden = true;
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      document.querySelectorAll(".screen-overlay-trigger").forEach(function (node) {
+        node.addEventListener("click", function (e) {
+          e.preventDefault();
+          openOverlay();
+        });
+      });
+
+      closeBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        closeOverlay();
+      });
+
+      overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) closeOverlay();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !overlay.hidden) closeOverlay();
+      });
     })();
   </script>
 </body>
