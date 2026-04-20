@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Спасибо</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1718640365769932');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img src="https://www.facebook.com/tr?id=1718640365769932&ev=PageView&noscript=1" height="1" width="1" style="display:none" alt=""></noscript>
+</head>
+<body>
+  <div id="page-loader" class="page-loader" aria-label="Загрузка" aria-busy="true">
+    <div class="page-loader__spinner" aria-hidden="true"></div>
+  </div>
+  <main class="landing-shell">
+    <div class="full-width-image">
+      <img src="assets/thx.png" alt="Спасибо">
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var loader = document.getElementById("page-loader");
+      if (!loader) return;
+      function hideLoader() {
+        loader.hidden = true;
+        loader.setAttribute("aria-hidden", "true");
+        loader.setAttribute("aria-busy", "false");
+      }
+      if (document.readyState === "complete") hideLoader();
+      else window.addEventListener("load", hideLoader);
+    })();
+
+    function getCookie(name) {
+      var value = "; " + document.cookie;
+      var parts = value.split("; " + name + "=");
+      if (parts.length === 2) return parts.pop().split(";").shift();
+      return null;
+    }
+
+    setTimeout(function () {
+      window.location.href =
+        "https://t.me/Olena_Dobrovolska_SystemX100_bot?start=69e0abd31fda9fbf770f1bcb";
+    }, 1000);
+  </script>
+</body>
+</html>

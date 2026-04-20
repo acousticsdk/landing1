@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
   <title></title>
   <link rel="stylesheet" href="style.css">
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1718640365769932');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img src="https://www.facebook.com/tr?id=1718640365769932&ev=PageView&noscript=1" height="1" width="1" style="display:none" alt=""></noscript>
 </head>
 <body>
   <div id="page-loader" class="page-loader" aria-label="Загрузка" aria-busy="true">
@@ -54,20 +67,6 @@
   </div>
   </main>
 
-  <div
-    class="screen-overlay"
-    id="screen-overlay"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Окно"
-    hidden
-    aria-hidden="true"
-  >
-    <button type="button" class="screen-overlay__close" id="screen-overlay-close" aria-label="Закрыть">
-      <span aria-hidden="true" class="screen-overlay__close-x">×</span>
-    </button>
-  </div>
-
   <script>
     (function () {
       var loader = document.getElementById("page-loader");
@@ -116,41 +115,11 @@
     })();
 
     (function () {
-      var overlay = document.getElementById("screen-overlay");
-      var closeBtn = document.getElementById("screen-overlay-close");
-      if (!overlay || !closeBtn) return;
-
-      function openOverlay() {
-        overlay.hidden = false;
-        overlay.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-        closeBtn.focus();
-      }
-
-      function closeOverlay() {
-        overlay.hidden = true;
-        overlay.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-      }
-
       document.querySelectorAll(".screen-overlay-trigger").forEach(function (node) {
         node.addEventListener("click", function (e) {
           e.preventDefault();
-          openOverlay();
+          window.location.href = "thanks.html";
         });
-      });
-
-      closeBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        closeOverlay();
-      });
-
-      overlay.addEventListener("click", function (e) {
-        if (e.target === overlay) closeOverlay();
-      });
-
-      document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape" && !overlay.hidden) closeOverlay();
       });
     })();
 
