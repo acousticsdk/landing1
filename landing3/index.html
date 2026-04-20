@@ -2,25 +2,149 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Landing 3</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, sans-serif;
-      background: #000;
-      color: #888;
-    }
-    a { color: #ccc; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <title></title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1718640365769932');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img src="https://www.facebook.com/tr?id=1718640365769932&ev=PageView&noscript=1" height="1" width="1" style="display:none" alt=""></noscript>
 </head>
 <body>
-  <p>Заготовка <strong>landing3</strong>. Замените содержимое папки на вёрстку лендинга (как в <code>landing1/</code>).</p>
-  <p style="position:absolute;bottom:1rem;"><a href="/">На главную</a></p>
+  <div id="page-loader" class="page-loader" aria-label="Загрузка" aria-busy="true">
+    <div class="page-loader__spinner" aria-hidden="true"></div>
+  </div>
+  <main class="landing-shell">
+  <div class="full-width-image">
+    <img src="assets/1.png" alt="Изображение 1">
+  </div>
+  <div class="full-width-image full-width-image--hero">
+    <img src="assets/2.png" alt="Изображение 2">
+    <div class="hero-overlay">
+      <img src="assets/button1.png" alt="" class="hero-overlay__button screen-overlay-trigger">
+      <div class="hero-overlay__hint-row">
+        <p class="hero-overlay__hint">Для регистрации кликни тут</p>
+        <img src="assets/arrow1.svg" alt="" class="hero-overlay__hint-arrow" width="12" height="19">
+      </div>
+      <p class="hero-overlay__timer" id="hero-countdown-timer" aria-live="polite">09:59:00</p>
+    </div>
+  </div>
+  <div class="full-width-image">
+    <img src="assets/3.png" alt="Изображение 3">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/4.png" alt="Изображение 4">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/5.png" alt="Изображение 5">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/6.png" alt="Изображение 6">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/7.png" alt="Изображение 7" class="screen-overlay-trigger">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/8.png" alt="Изображение 8">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/9.png" alt="Изображение 9" class="screen-overlay-trigger">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/10.png" alt="Изображение 10">
+  </div>
+  <div class="full-width-image">
+    <img src="assets/11.png" alt="Изображение 11" class="screen-overlay-trigger">
+  </div>
+  </main>
+
+  <script>
+    (function () {
+      var loader = document.getElementById("page-loader");
+      if (!loader) return;
+      function hideLoader() {
+        loader.hidden = true;
+        loader.setAttribute("aria-hidden", "true");
+        loader.setAttribute("aria-busy", "false");
+      }
+      if (document.readyState === "complete") hideLoader();
+      else window.addEventListener("load", hideLoader);
+    })();
+
+    (function () {
+      var el = document.getElementById("hero-countdown-timer");
+      if (!el) return;
+
+      var durationMs = 9 * 60 * 1000 + 59 * 1000;
+      var start = performance.now();
+
+      function pad(n, len) {
+        var s = String(n);
+        while (s.length < len) s = "0" + s;
+        return s;
+      }
+
+      function tick(ts) {
+        var elapsed = ts - start;
+        while (elapsed >= durationMs) {
+          start += durationMs;
+          elapsed = ts - start;
+        }
+        var left = durationMs - elapsed;
+
+        var minutes = Math.floor(left / 60000);
+        var seconds = Math.floor((left % 60000) / 1000);
+        var cs = Math.floor((left % 1000) / 10);
+
+        el.textContent =
+          pad(minutes, 2) + ":" + pad(seconds, 2) + ":" + pad(cs, 2);
+
+        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+
+    (function () {
+      document.querySelectorAll(".screen-overlay-trigger").forEach(function (node) {
+        node.addEventListener("click", function (e) {
+          e.preventDefault();
+          window.location.href = "thanks.html";
+        });
+      });
+    })();
+
+    (function () {
+      function blockMultiTouch(e) {
+        if (e.touches && e.touches.length > 1) e.preventDefault();
+      }
+
+      document.addEventListener("touchstart", blockMultiTouch, { passive: false });
+      document.addEventListener("touchmove", blockMultiTouch, { passive: false });
+
+      ["gesturestart", "gesturechange", "gestureend"].forEach(function (type) {
+        document.addEventListener(type, function (e) {
+          e.preventDefault();
+        });
+      });
+
+      document.addEventListener(
+        "wheel",
+        function (e) {
+          if (e.ctrlKey) e.preventDefault();
+        },
+        { passive: false }
+      );
+    })();
+  </script>
 </body>
 </html>
