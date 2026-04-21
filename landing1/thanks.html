@@ -26,7 +26,13 @@
   </div>
   <main class="landing-shell">
     <div class="full-width-image">
-      <img src="assets/thx.png" alt="Спасибо">
+      <img src="thx1.png" alt="">
+    </div>
+    <div class="full-width-image thanks-thx2-tap">
+      <img src="thx2.png" alt="" id="thanks-thx2" role="button" tabindex="0">
+    </div>
+    <div class="full-width-image">
+      <img src="thx3.png" alt="">
     </div>
   </main>
 
@@ -50,10 +56,35 @@
       return null;
     }
 
-    setTimeout(function () {
-      window.location.href =
+    (function () {
+      var thanksRedirectUrl =
         "https://tg.pulse.is/Olena_Dobrovolska_SystemX100_bot?start=69e0abd31fda9fbf770f1bcb&segment=value1&video_click=value2&utm_campaign=lend110years";
-    }, 1000);
+      var thx2 = document.getElementById("thanks-thx2");
+      var redirectTimer = setTimeout(function () {
+        window.location.href = thanksRedirectUrl;
+      }, 3000);
+
+      function goThanks() {
+        if (redirectTimer != null) {
+          clearTimeout(redirectTimer);
+          redirectTimer = null;
+        }
+        window.location.href = thanksRedirectUrl;
+      }
+
+      if (thx2) {
+        thx2.addEventListener("click", function (e) {
+          e.preventDefault();
+          goThanks();
+        });
+        thx2.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            goThanks();
+          }
+        });
+      }
+    })();
   </script>
 </body>
 </html>

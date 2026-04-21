@@ -172,3 +172,8 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* Thanks page: middle block uses same redirect as auto-timer */
+.thanks-thx2-tap > img {
+  cursor: pointer;
+}
