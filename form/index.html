@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Форма</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="landing-shell">
+    <div class="form-page">
+      <div class="form-hero">
+        <div class="form-hero__copy">
+          <h1 class="form-heading font-cine">
+            <span class="form-heading__accent">Заполните форму,</span><br>
+            Чтобы забронировать<br>
+            место на программе
+          </h1>
+
+          <img
+            class="form-badge"
+            src="buttonX100.png"
+            width="566"
+            height="106"
+            alt="«Система улучшений X100»"
+            loading="lazy"
+            decoding="async"
+          >
+
+          <p class="form-lead font-sf">
+            <span class="form-lead__muted">на лучших условиях и получи </span><span class="form-lead__accent">бесплатную консультацию по вашей ситуации</span>
+          </p>
+        </div>
+
+        <form class="form-block font-sf" action="#" method="get" novalidate>
+          <label class="visually-hidden" for="field-name">Ваше имя</label>
+          <input
+            id="field-name"
+            class="form-input"
+            type="text"
+            name="name"
+            placeholder="Ваше имя:"
+            autocomplete="name"
+            inputmode="text"
+          >
+          <label class="visually-hidden" for="field-phone">Ваш номер телефона</label>
+          <input
+            id="field-phone"
+            class="form-input"
+            type="tel"
+            name="phone"
+            placeholder="Ваш номер телефона:"
+            autocomplete="tel"
+            inputmode="tel"
+          >
+          <label class="visually-hidden" for="field-tg">Ваш ник в телеграм</label>
+          <input
+            id="field-tg"
+            class="form-input"
+            type="text"
+            name="telegram"
+            placeholder="Ваш ник в телеграм @:"
+            autocomplete="username"
+            inputmode="text"
+          >
+          <button type="submit" class="form-submit font-cine">Занять место</button>
+        </form>
+      </div>
+
+      <section class="faq-cta" aria-labelledby="faq-cta-heading">
+        <div class="faq-cta__inner">
+          <div class="faq-cta__copy">
+            <h2 id="faq-cta-heading" class="faq-cta__title font-cine">
+              <span class="faq-cta__title-part">Остались</span>
+              <span class="faq-cta__title-part faq-cta__title-part--accent">вопросы?</span>
+            </h2>
+            <p class="faq-cta__lead font-sf">
+              Напишите Елене в телеграм, чтобы получить ответ на свои вопросы
+            </p>
+          </div>
+          <div class="faq-cta__action">
+            <img
+              class="faq-cta__tg-img"
+              src="buttonTG.png"
+              width="1750"
+              height="376"
+              alt="Написать в Телеграм"
+              draggable="false"
+              loading="lazy"
+              decoding="async"
+            >
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

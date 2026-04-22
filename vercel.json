@@ -3,6 +3,7 @@
     { "source": "/landing1", "destination": "/landing1/", "permanent": false },
     { "source": "/landing2", "destination": "/landing2/", "permanent": false },
     { "source": "/landing3", "destination": "/landing3/", "permanent": false },
-    { "source": "/landing4", "destination": "/landing4/", "permanent": false }
+    { "source": "/landing4", "destination": "/landing4/", "permanent": false },
+    { "source": "/form", "destination": "/form/", "permanent": false }
   ]
 }
