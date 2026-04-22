@@ -1,12 +1,14 @@
 /**
  * Заявки в Google Таблицу через веб-приложение Apps Script.
  *
- * Если в консоли 403:
- * 1) Развернуть → Управление развертываниями → «Изменить» (карандаш)
- * 2) «Кто имеет доступ» → «Все», в т.ч. анонимные пользователи (Anyone / All)
- * 3) «Запускать от имени» → владелец таблицы (Me)
- * 4) Сохранить НОВОЕ развертывание и подставить новый URL /exec в FORM_ENDPOINT
- * 5) Один раз открыть URL /exec в браузере под аккаунтом Google и подтвердить права
+ * Важно: у веб-приложения Google нет заголовка Access-Control-Allow-Origin для
+ * произвольных сайтов — fetch() с вашего домена даёт CORS-ошибку даже при 200.
+ * Поэтому отправка только через обычный POST в скрытый iframe (без XHR/fetch).
+ *
+ * Если в Network по-прежнему 403:
+ * — Развернуть → Управление развертываниями → доступ «Все», в т.ч. анонимные
+ * — Запускать от имени: владелец таблицы
+ * — Новое развертывание и актуальный URL /exec в FORM_ENDPOINT
  */
 const FORM_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbyJBmfoqcciWjJH2uCGOPiliHr7DEnGV41n_TNsVO_4kKLRiFni5yGpD5MwGdBM-SBP/exec";
@@ -47,9 +49,9 @@ function postViaHiddenIframe(actionUrl, params) {
     }
 
     iframe.addEventListener("load", function () {
-      setTimeout(cleanup, 300);
+      setTimeout(cleanup, 400);
     });
-    setTimeout(cleanup, 10000);
+    setTimeout(cleanup, 12000);
 
     try {
       form.submit();
@@ -64,8 +66,8 @@ function postViaHiddenIframe(actionUrl, params) {
   var form = document.querySelector(".form-block");
   if (!form) return;
 
-  var help403 =
-    "\n\nЕсли ошибка 403: в Google Apps Script откройте развёртывание веб-приложения и выставьте доступ «У всех» (включая анонимных), затем создайте новое развертывание и обновите ссылку в submit-form.js.";
+  var afterSend =
+    "Проверьте таблицу через минуту. Если строки нет, в консоли часто бывает 403 — тогда в Apps Script для веб-приложения включите доступ «У всех» (включая анонимных) и сделайте новое развертывание.";
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -91,39 +93,15 @@ function postViaHiddenIframe(actionUrl, params) {
     var body = new URLSearchParams({ name: name, phone: phone, telegram: telegram });
 
     try {
-      var res = await fetch(FORM_ENDPOINT, {
-        method: "POST",
-        mode: "cors",
-        cache: "no-store",
-        body: body,
-      });
-
-      if (res.ok) {
-        form.reset();
-        alert("Спасибо! Заявка отправлена.");
-        return;
-      }
-
-      var hint = res.status === 403 ? help403 : "";
-      alert(
-        "Сервер отклонил заявку (код " + res.status + ")." + hint
-      );
+      await postViaHiddenIframe(FORM_ENDPOINT, body);
+      form.reset();
+      alert("Спасибо! Заявка отправлена.\n\n" + afterSend);
     } catch (err) {
-      console.warn("[form] fetch не удался, пробуем отправку через iframe", err);
-      try {
-        await postViaHiddenIframe(FORM_ENDPOINT, body);
-        form.reset();
-        alert(
-          "Заявка отправлена. Если строка не появилась в таблице в течение минуты, проверьте доступ к веб-приложению (не должно быть 403 в консоли)." +
-            help403
-        );
-      } catch (err2) {
-        console.error(err2);
-        alert(
-          "Не удалось отправить заявку. Проверьте интернет и настройки Google Apps Script." +
-            help403
-        );
-      }
+      console.error(err);
+      alert(
+        "Не удалось отправить форму. Проверьте подключение к интернету.\n\n" +
+          afterSend
+      );
     }
   });
 })();
