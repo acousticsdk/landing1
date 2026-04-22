@@ -1,73 +1,79 @@
 /**
- * Заявки в Google Таблицу через веб-приложение Apps Script.
+ * Заявки в Google Таблицу через «Развернуть» → веб-приложение Apps Script.
  *
- * Важно: у веб-приложения Google нет заголовка Access-Control-Allow-Origin для
- * произвольных сайтов — fetch() с вашего домена даёт CORS-ошибку даже при 200.
- * Поэтому отправка только через обычный POST в скрытый iframe (без XHR/fetch).
- *
- * Если в Network по-прежнему 403:
- * — Развернуть → Управление развертываниями → доступ «Все», в т.ч. анонимные
- * — Запускать от имени: владелец таблицы
- * — Новое развертывание и актуальный URL /exec в FORM_ENDPOINT
+ * Настройка (кратко):
+ * 1) Новая Google Таблица → строка 1: Имя | Телефон | Telegram | Дата
+ * 2) Таблица → Расширения → Apps Script → вставьте код из apps-script/Code.gs
+ * 3) Развернуть → Новое развертывание → тип «Веб-приложение»
+ *    — выполнять от вашего имени, доступ: «У всех»
+ * 4) Скопируйте URL веб-приложения и вставьте ниже в FORM_ENDPOINT.
  */
 const FORM_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbyJBmfoqcciWjJH2uCGOPiliHr7DEnGV41n_TNsVO_4kKLRiFni5yGpD5MwGdBM-SBP/exec";
+  "https://script.google.com/macros/s/AKfycbzeF40KMHBTIhPMsgK_9kZ7JnhERZMjOlDI6s6_0CpIGg5JZmPOJ0MUgmxhpkzElku2/exec";
 
-function postViaHiddenIframe(actionUrl, params) {
-  return new Promise(function (resolve, reject) {
-    var iframeName = "gs-sheet-" + Date.now();
-    var iframe = document.createElement("iframe");
-    iframe.name = iframeName;
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.style.cssText =
-      "position:absolute;width:0;height:0;border:0;clip:rect(0,0,0,0)";
-    document.body.appendChild(iframe);
+function closeFormThanks() {
+  var root = document.getElementById("form-thanks");
+  if (!root) return;
+  root.classList.remove("is-open");
+  root.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
 
-    var form = document.createElement("form");
-    form.method = "POST";
-    form.action = actionUrl;
-    form.target = iframeName;
-    form.acceptCharset = "UTF-8";
+function openFormThanks() {
+  var root = document.getElementById("form-thanks");
+  if (!root) {
+    root = document.createElement("div");
+    root.id = "form-thanks";
+    root.className = "form-thanks";
+    root.setAttribute("role", "dialog");
+    root.setAttribute("aria-modal", "true");
+    root.setAttribute("aria-labelledby", "form-thanks-title");
+    root.setAttribute("aria-hidden", "true");
+    root.innerHTML =
+      '<div class="form-thanks__dialog">' +
+      '<p id="form-thanks-title" class="form-thanks__title font-cine">' +
+      '<span class="form-thanks__title-accent">Спасибо</span> за заявку' +
+      "</p>" +
+      '<p class="form-thanks__text font-sf">Мы свяжемся с вами в ближайшее время.</p>' +
+      '<button type="button" class="form-thanks__btn font-sf" data-form-thanks-close>OK</button>' +
+      "</div>";
+    document.body.appendChild(root);
 
-    params.forEach(function (value, key) {
-      var input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = value;
-      form.appendChild(input);
+    root.addEventListener("click", function (e) {
+      if (e.target === root) closeFormThanks();
     });
+    root
+      .querySelector("[data-form-thanks-close]")
+      .addEventListener("click", closeFormThanks);
+  }
 
-    document.body.appendChild(form);
-
-    var cleaned = false;
-    function cleanup() {
-      if (cleaned) return;
-      cleaned = true;
-      form.remove();
-      iframe.remove();
-      resolve();
-    }
-
-    iframe.addEventListener("load", function () {
-      setTimeout(cleanup, 400);
-    });
-    setTimeout(cleanup, 12000);
-
-    try {
-      form.submit();
-    } catch (err) {
-      cleanup();
-      reject(err);
-    }
+  document.body.style.overflow = "hidden";
+  root.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(function () {
+    root.classList.add("is-open");
+    var btn = root.querySelector("[data-form-thanks-close]");
+    if (btn) btn.focus();
   });
 }
 
+document.addEventListener("keydown", function (e) {
+  if (e.key !== "Escape") return;
+  var root = document.getElementById("form-thanks");
+  if (root && root.classList.contains("is-open")) {
+    e.preventDefault();
+    closeFormThanks();
+  }
+});
+
 (function () {
-  var form = document.querySelector(".form-block");
+  const form = document.querySelector(".form-block");
   if (!form) return;
 
-  var afterSend =
-    "Проверьте таблицу через минуту. Если строки нет, в консоли часто бывает 403 — тогда в Apps Script для веб-приложения включите доступ «У всех» (включая анонимных) и сделайте новое развертывание.";
+  form.querySelectorAll(".form-input").forEach(function (input) {
+    input.addEventListener("input", function () {
+      input.classList.remove("form-input--invalid");
+    });
+  });
 
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
@@ -80,28 +86,63 @@ function postViaHiddenIframe(actionUrl, params) {
       return;
     }
 
-    var fd = new FormData(form);
-    var name = (fd.get("name") || "").toString().trim();
-    var phone = (fd.get("phone") || "").toString().trim();
-    var telegram = (fd.get("telegram") || "").toString().trim();
+    form.querySelectorAll(".form-input").forEach(function (el) {
+      el.classList.remove("form-input--invalid");
+    });
 
-    if (!name || !phone) {
-      alert("Укажите имя и номер телефона.");
+    const fd = new FormData(form);
+    const name = (fd.get("name") || "").toString().trim();
+    const phone = (fd.get("phone") || "").toString().trim();
+    const telegram = (fd.get("telegram") || "").toString().trim();
+
+    var nameOk = !!name;
+    var phoneOk = !!phone;
+    var telegramOk = !!telegram;
+    if (!nameOk) {
+      var nameEl = form.querySelector('[name="name"]');
+      if (nameEl) nameEl.classList.add("form-input--invalid");
+    }
+    if (!phoneOk) {
+      var phoneEl = form.querySelector('[name="phone"]');
+      if (phoneEl) phoneEl.classList.add("form-input--invalid");
+    }
+    if (!telegramOk) {
+      var tgEl = form.querySelector('[name="telegram"]');
+      if (tgEl) tgEl.classList.add("form-input--invalid");
+    }
+    if (!nameOk || !phoneOk || !telegramOk) {
+      var firstBad = form.querySelector(".form-input--invalid");
+      if (firstBad) firstBad.focus();
       return;
     }
 
-    var body = new URLSearchParams({ name: name, phone: phone, telegram: telegram });
+    const submitBtn = form.querySelector(".form-submit");
+    const body = new URLSearchParams({ name, phone, telegram });
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.classList.add("form-submit--pending");
+    }
 
     try {
-      await postViaHiddenIframe(FORM_ENDPOINT, body);
+      await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
+        body,
+      });
       form.reset();
-      alert("Спасибо! Заявка отправлена.\n\n" + afterSend);
+      openFormThanks();
     } catch (err) {
       console.error(err);
-      alert(
-        "Не удалось отправить форму. Проверьте подключение к интернету.\n\n" +
-          afterSend
-      );
+      alert("Не удалось отправить заявку. Попробуйте позже.");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("form-submit--pending");
+      }
     }
   });
 })();
