@@ -11,59 +11,9 @@
 const FORM_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbzeF40KMHBTIhPMsgK_9kZ7JnhERZMjOlDI6s6_0CpIGg5JZmPOJ0MUgmxhpkzElku2/exec";
 
-function closeFormThanks() {
-  var root = document.getElementById("form-thanks");
-  if (!root) return;
-  root.classList.remove("is-open");
-  root.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-}
-
-function openFormThanks() {
-  var root = document.getElementById("form-thanks");
-  if (!root) {
-    root = document.createElement("div");
-    root.id = "form-thanks";
-    root.className = "form-thanks";
-    root.setAttribute("role", "dialog");
-    root.setAttribute("aria-modal", "true");
-    root.setAttribute("aria-labelledby", "form-thanks-title");
-    root.setAttribute("aria-hidden", "true");
-    root.innerHTML =
-      '<div class="form-thanks__dialog">' +
-      '<p id="form-thanks-title" class="form-thanks__title font-cine">' +
-      '<span class="form-thanks__title-accent">Спасибо</span> за заявку' +
-      "</p>" +
-      '<p class="form-thanks__text font-sf">Мы свяжемся с вами в ближайшее время.</p>' +
-      '<button type="button" class="form-thanks__btn font-sf" data-form-thanks-close>OK</button>' +
-      "</div>";
-    document.body.appendChild(root);
-
-    root.addEventListener("click", function (e) {
-      if (e.target === root) closeFormThanks();
-    });
-    root
-      .querySelector("[data-form-thanks-close]")
-      .addEventListener("click", closeFormThanks);
-  }
-
-  document.body.style.overflow = "hidden";
-  root.setAttribute("aria-hidden", "false");
-  requestAnimationFrame(function () {
-    root.classList.add("is-open");
-    var btn = root.querySelector("[data-form-thanks-close]");
-    if (btn) btn.focus();
-  });
-}
-
-document.addEventListener("keydown", function (e) {
-  if (e.key !== "Escape") return;
-  var root = document.getElementById("form-thanks");
-  if (root && root.classList.contains("is-open")) {
-    e.preventDefault();
-    closeFormThanks();
-  }
-});
+/** Після успішної відправки заявки — оплата броню (WayForPay). */
+const PAYMENT_REDIRECT_URL =
+  "https://secure.wayforpay.com/button/b5e68f38574dd";
 
 (function () {
   const form = document.querySelector(".form-block");
@@ -133,12 +83,10 @@ document.addEventListener("keydown", function (e) {
         },
         body,
       });
-      form.reset();
-      openFormThanks();
+      window.location.assign(PAYMENT_REDIRECT_URL);
     } catch (err) {
       console.error(err);
       alert("Не удалось отправить заявку. Попробуйте позже.");
-    } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.classList.remove("form-submit--pending");
