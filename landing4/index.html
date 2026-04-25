@@ -75,15 +75,43 @@
 
   <script>
     (function () {
-      function formatHHMM(date) {
-        var h = date.getHours();
-        var m = date.getMinutes();
+      var TZ = "Europe/Kyiv";
+
+      function getKyivParts(date) {
+        var map = {};
+        new Intl.DateTimeFormat("en-GB", {
+          timeZone: TZ,
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          hour12: false,
+        })
+          .formatToParts(date)
+          .forEach(function (seg) {
+            if (seg.type !== "literal") map[seg.type] = seg.value;
+          });
+        return {
+          year: +map.year,
+          month: +map.month,
+          day: +map.day,
+          hour: +map.hour,
+          minute: +map.minute,
+          second: +map.second,
+        };
+      }
+
+      function formatHHMMKyiv(date) {
+        var p = getKyivParts(date);
+        var h = p.hour;
+        var m = p.minute;
         return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
       }
-      console.log("[landing4] Локальное время:", formatHHMM(new Date()));
-    })();
 
-    (function () {
+      console.log("[landing4] Время (Киев):", formatHHMMKyiv(new Date()));
+
       var months = [
         "января",
         "февраля",
@@ -102,15 +130,32 @@
       if (!el) return;
 
       var now = new Date();
+      var p = getKyivParts(now);
       var secSinceMidnight =
-        now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+        p.hour * 3600 + p.minute * 60 + p.second;
       var after1700 = secSinceMidnight > 17 * 3600;
 
-      var target = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      if (after1700) target.setDate(target.getDate() + 1);
+      var y = p.year;
+      var mo = p.month;
+      var d = p.day;
+      if (after1700) {
+        var startKey = y * 10000 + mo * 100 + d;
+        var t = now.getTime();
+        var guard = 0;
+        while (guard++ < 48) {
+          t += 3600000;
+          var q = getKyivParts(new Date(t));
+          var qKey = q.year * 10000 + q.month * 100 + q.day;
+          if (qKey !== startKey) {
+            y = q.year;
+            mo = q.month;
+            d = q.day;
+            break;
+          }
+        }
+      }
 
-      el.textContent =
-        target.getDate() + " " + months[target.getMonth()];
+      el.textContent = d + " " + months[mo - 1];
     })();
 
     (function () {

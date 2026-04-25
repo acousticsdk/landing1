@@ -124,15 +124,29 @@
 
   <script>
     (function () {
-      function formatHHMM(date) {
-        var h = date.getHours();
-        var m = date.getMinutes();
-        return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+      function formatHHMMKyiv(date) {
+        var map = {};
+        new Intl.DateTimeFormat("en-GB", {
+          timeZone: "Europe/Kyiv",
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          hour12: false,
+        })
+          .formatToParts(date)
+          .forEach(function (seg) {
+            if (seg.type !== "literal") map[seg.type] = seg.value;
+          });
+        var h = +map.hour;
+        var m = +map.minute;
+        return (
+          (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m
+        );
       }
-      function logLocalTime() {
-        console.log("[form] Локальное время:", formatHHMM(new Date()));
-      }
-      logLocalTime();
+      console.log("[form] Время (Киев):", formatHHMMKyiv(new Date()));
     })();
   </script>
 
