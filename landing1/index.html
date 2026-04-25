@@ -24,7 +24,13 @@
     <div class="page-loader__spinner" aria-hidden="true"></div>
   </div>
   <main class="landing-shell">
-  <div class="full-width-image">
+  <div class="full-width-image full-width-image--first">
+    <div class="first-promo-strip" role="banner">
+      <img class="first-promo-strip__icon" src="assets/mc-promo-icon.svg" width="28" height="28" alt="" decoding="async">
+      <p class="first-promo-strip__text">
+        Бесплатный мастер-класс <span id="first-promo-strip-date" class="first-promo-strip__accent"></span>
+      </p>
+    </div>
     <img src="assets/1.png" alt="Изображение 1">
   </div>
   <div class="full-width-image full-width-image--hero">
@@ -68,6 +74,45 @@
   </main>
 
   <script>
+    (function () {
+      function formatHHMM(date) {
+        var h = date.getHours();
+        var m = date.getMinutes();
+        return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+      }
+      console.log("[landing1] Локальное время:", formatHHMM(new Date()));
+    })();
+
+    (function () {
+      var months = [
+        "января",
+        "февраля",
+        "марта",
+        "апреля",
+        "мая",
+        "июня",
+        "июля",
+        "августа",
+        "сентября",
+        "октября",
+        "ноября",
+        "декабря",
+      ];
+      var el = document.getElementById("first-promo-strip-date");
+      if (!el) return;
+
+      var now = new Date();
+      var secSinceMidnight =
+        now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      var after1700 = secSinceMidnight > 17 * 3600;
+
+      var target = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      if (after1700) target.setDate(target.getDate() + 1);
+
+      el.textContent =
+        target.getDate() + " " + months[target.getMonth()];
+    })();
+
     (function () {
       var loader = document.getElementById("page-loader");
       if (!loader) return;
